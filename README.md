@@ -207,7 +207,7 @@ and end-to-end suites run with no Studio and no network. The integration suite
 skips cleanly unless `genlayer-test` is installed.
 
 <!-- measured:tests -->
-`pytest tests/ -q` reports **155 passed, 1 skipped**, and every one of the **46** mutations below is caught.
+`pytest tests/ -q` reports **166 passed, 1 skipped**, and every one of the **53** mutations below is caught.
 <!-- /measured:tests -->
 
 ### The tests have teeth
@@ -260,6 +260,13 @@ table if anything escapes.
 | negative ids allowed through to Python list indexing | `test_a_read_with_a_negative_id_does_not_return_the_last_row` |
 | the reason sanitiser disabled | `test_the_reason_is_sanitised_on_the_way_in` |
 | control characters left in reasons | `test_control_characters_become_spaces` |
+| the prompt fence removed, so a caller can forge a block | `test_the_author_label_is_fenced_too` |
+| the fence deletes instead of replacing | `test_fence_replaces_rather_than_deletes` |
+| only the opening bracket fenced | `test_fence_replaces_rather_than_deletes` |
+| the revision text reaches the model unfenced | `test_every_lifted_function_is_identical_to_the_contract` |
+| the dimension catalogue reaches the model unfenced | `test_every_lifted_function_is_identical_to_the_contract` |
+| a caller string routed through the unfenced role argument | `test_a_tightening_is_applied_and_bumps_the_version` |
+| the author label reaches the model unfenced | `test_every_lifted_function_is_identical_to_the_contract` |
 | a nested mapping returned from the block | `test_a_tightening_is_applied_and_bumps_the_version` |
 | a bool returned from the block | `test_a_tightening_is_applied_and_bumps_the_version` |
 | a collection nested back into a storage dataclass | `TypeError at import` |
@@ -283,6 +290,10 @@ be exercised looks identical to one that is not there.
 - **Exact equality between nodes.** No tolerance, on any dimension.
 - **Every write is bound to an address**, and a static test asserts it for the
   methods nobody has written yet.
+- **Untrusted text is fenced at the prompt boundary.** Tagging it and telling the
+  model it is data is not a fence on its own: `fence()` neutralises the
+  characters that can close a tag, so a caller cannot forge a block. Replace,
+  never delete, and at the boundary only — storage keeps what was written.
 - **Refusing is designed.** `broadened` and `indeterminate` are the outputs this
   contract exists to produce.
 - **No web access.** Every input is text the caller supplies, which removes an

@@ -38,9 +38,11 @@ TIGHTER = ("We retain personal data for at most 30 days, we never share it "
 DROPPED = ("We retain personal data for at most 30 days and we notify affected "
            "users within 24 hours of any confirmed security breach.")
 
-# The two prompts differ only in the DIRECTION line, so a mock keys on that.
-FWD = "judge THE PROPOSED TEXT against THE PUBLISHED TEXT"
-REV = "judge THE PUBLISHED TEXT against THE PROPOSED TEXT"
+# The two prompts differ only in which role each positional block carries, so a
+# mock keys on that line. Keying on the text itself would not work: both texts
+# appear in both prompts.
+FWD = "<first> is THE PUBLISHED TEXT"
+REV = "<first> is THE PROPOSED TEXT"
 
 
 def passes(forward, reverse, because="the retention window is shorter"):
@@ -806,6 +808,21 @@ class TestShape:
             if isinstance(node, ast.Attribute) and ast.unparse(node).startswith("gl.nondet"):
                 assert id(node) in inner, (
                     f"{ast.unparse(node)} is outside leader_fn/validator_fn")
+
+    def test_the_two_unfenced_prompt_arguments_are_always_literals(self):
+        """build_prompt takes two arguments that are NOT fenced, because they
+        name which role each block carries and the contract writes them. That
+        exemption is only sound while every call site passes a literal: an edit
+        that routed a caller string through one of them would hand the model an
+        unfenced value with a test still saying the prompt is fenced."""
+        tree = ast.parse(pathlib.Path(CONTRACT_PATH).read_text(encoding="utf-8"))
+        calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)
+                 and isinstance(n.func, ast.Name) and n.func.id == "build_prompt"]
+        assert len(calls) == 2, "expected one call per presentation order"
+        for call in calls:
+            for arg in call.args[4:]:
+                assert isinstance(arg, ast.Constant) and isinstance(arg.value, str), (
+                    "a non-literal reaches the model unfenced: %s" % ast.unparse(arg))
 
     def test_every_write_that_touches_a_commitment_checks_the_sender(self):
         """This covers the methods nobody has written yet: a new public write

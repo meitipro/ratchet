@@ -282,6 +282,43 @@ MUTATIONS = [
         "",
     ),
 
+    # -- the prompt boundary. Tagging untrusted text is not a fence unless
+    # -- the characters that close a tag are neutralised too.
+    (
+        "the prompt fence removed, so a caller can forge a block",
+        '    return str(raw).replace("<", "(").replace(">", ")")',
+        "    return str(raw)",
+    ),
+    (
+        "the fence deletes instead of replacing",
+        '    return str(raw).replace("<", "(").replace(">", ")")',
+        '    return str(raw).replace("<", "").replace(">", "")',
+    ),
+    (
+        "only the opening bracket fenced",
+        '    return str(raw).replace("<", "(").replace(">", ")")',
+        '    return str(raw).replace("<", "(")',
+    ),
+    (
+        "the revision text reaches the model unfenced",
+        "{fence(second_text)}",
+        "{second_text}",
+    ),
+    (
+        "the dimension catalogue reaches the model unfenced",
+        "{fence(numbered_dimensions)}",
+        "{numbered_dimensions}",
+    ),
+    (
+        "a caller string routed through the unfenced role argument",
+        '                             "THE PUBLISHED TEXT", "THE PROPOSED TEXT"),',
+        "                             label, \"THE PROPOSED TEXT\"),",
+    ),
+    (
+        "the author label reaches the model unfenced",
+        "{fence(label)}",
+        "{label}",
+    ),
     # -- shape rules the runtime enforces and a green suite cannot see
     (
         "a nested mapping returned from the block",
