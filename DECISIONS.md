@@ -181,6 +181,27 @@ nested collection — is refused by the runtime. A deployment expecting very man
 records should use one contract per tenant rather than one contract for all of
 them.
 
+## A refusal leaves the author somewhere to go
+
+Added after a sibling project was rejected for the opposite: a contract whose
+appeal path existed in the source and was unreachable on every round anybody
+actually ran.
+
+`judge()` is open to anybody, a revision is judged exactly once, and a
+`broadened` on a revision the author believes is a tightening is a real
+possibility. So the recourse matters as much as the refusal:
+
+- A refused revision leaves `text` and `version` untouched, so the author may
+  **re-propose the same text** and have it judged again.
+- An `indeterminate` — the leader contradicting itself — spends nothing either.
+- Only an APPLIED revision moves the version, so a refusal leaves every sibling
+  written against the same base still judgeable.
+
+None of that is new behaviour; all of it is now **tested as a journey** rather
+than as a single call, and three mutations that close the route are caught. A
+path nobody exercises is a path an edit can shut with the suite still green,
+which is exactly how the sibling shipped.
+
 ## Why the tests are built the way they are
 
 ### The simulator gives each node its own world

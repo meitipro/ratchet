@@ -207,7 +207,7 @@ and end-to-end suites run with no Studio and no network. The integration suite
 skips cleanly unless `genlayer-test` is installed.
 
 <!-- measured:tests -->
-`pytest tests/ -q` reports **166 passed, 1 skipped**, and every one of the **53** mutations below is caught.
+`pytest tests/ -q` reports **170 passed, 1 skipped**, and every one of the **55** mutations below is caught.
 <!-- /measured:tests -->
 
 ### The tests have teeth
@@ -244,6 +244,8 @@ table if anything escapes.
 | the dimension cap removed, so an unbounded prompt is built | `test_more_than_twelve_dimensions_is_refused` |
 | a commitment allowed with no dimensions at all | `test_bad_dimension_lists_are_refused` |
 | the catalogue filter dropped, so every commitment shares one | `test_each_commitment_is_judged_on_its_own_catalogue` |
+| a refused revision consumes the base, so the author cannot try again | `test_a_restatement_is_accepted_and_moves_nothing` |
+| a refusal marks the commitment closed | `test_reproposing_after_a_tightening_works` |
 | propose left unauthenticated, so anyone may rewrite any commitment | `test_a_stranger_cannot_propose_on_someone_elses_commitment` |
 | the submitting address not recorded on the revision | `test_a_delegate_may_propose_and_the_record_names_them` |
 | a revoked delegate still counted as authorised | `test_a_revoked_delegate_cannot_propose` |

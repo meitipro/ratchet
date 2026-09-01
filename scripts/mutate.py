@@ -180,6 +180,17 @@ MUTATIONS = [
     ),
 
     # -- authority
+    # -- recourse. A refusal has to leave the refused party somewhere to go.
+    (
+        "a refused revision consumes the base, so the author cannot try again",
+        "        if verdict == TIGHTENED:",
+        "        if True:",
+    ),
+    (
+        "a refusal marks the commitment closed",
+        "        r.judged = True",
+        "        r.judged = True\n        c.closed = True",
+    ),
     (
         "propose left unauthenticated, so anyone may rewrite any commitment",
         "        if not self._may_propose(commitment_id, c, gl.message.sender_address):\n"

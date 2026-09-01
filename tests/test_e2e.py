@@ -335,6 +335,78 @@ class TestRatchet:
         with pytest.raises(S.UserError, match="already judged"):
             S.call(c, "judge", 0)
 
+    # -- recourse -----------------------------------------------------------
+    #
+    # A refusal has to leave the refused party somewhere to go. A contract that
+    # can reach a state where the party it judged has no next move is not a
+    # primitive, it is a trap -- and the paths that matter are the ones nobody
+    # thought to test, because they work until an edit quietly closes them and
+    # the rest of the suite stays green.
+
+    def test_an_author_can_repropose_the_same_text_after_a_refusal(self):
+        """The path that matters most. `judge()` is open to anybody, so a
+        revision can be judged by a stranger, and a `broadened` on a revision
+        the author believes is a tightening must not be the end of the road."""
+        c = self.deploy()
+        S.call(c, "propose", 0, TIGHTER)
+        self.mocks(passes("narrower|broader|same", "broader|narrower|same"))
+        S.call(c, "judge", 0)
+        assert c.revision(0)["verdict"] == "broadened"
+        assert c.text(0) == ORIGINAL
+        assert c.commitment(0)["version"] == 0
+
+        # same text, second attempt, and it can be judged
+        S.call(c, "propose", 0, TIGHTER)
+        self.mocks(passes("narrower|same|narrower", "broader|same|broader"))
+        S.call(c, "judge", 1)
+        assert c.revision(1)["verdict"] == "tightened"
+        assert c.text(0) == TIGHTER
+        assert c.commitment(0)["version"] == 1
+
+    def test_an_indeterminate_verdict_is_not_the_end_of_the_road_either(self):
+        """The leader contradicting itself says nothing about the revision, so
+        it must not spend the author's ability to make it."""
+        c = self.deploy()
+        S.call(c, "propose", 0, TIGHTER)
+        self.mocks(passes("narrower|same|same", "narrower|same|same"))
+        S.call(c, "judge", 0)
+        assert c.revision(0)["verdict"] == "indeterminate"
+
+        S.call(c, "propose", 0, TIGHTER)
+        self.mocks(passes("narrower|same|narrower", "broader|same|broader"))
+        S.call(c, "judge", 1)
+        assert c.revision(1)["verdict"] == "tightened"
+
+    def test_a_refusal_leaves_every_other_pending_revision_judgeable(self):
+        """Only an APPLIED revision moves the version, so a refusal must not
+        strand the siblings that were written against the same base."""
+        c = self.deploy()
+        S.call(c, "propose", 0, TIGHTER)
+        S.call(c, "propose", 0, DROPPED)
+        self.mocks(passes("narrower|broader|same", "broader|narrower|same"))
+        S.call(c, "judge", 1)
+        assert c.revision(1)["verdict"] == "broadened"
+        self.mocks(passes("narrower|same|narrower", "broader|same|broader"))
+        S.call(c, "judge", 0)
+        assert c.revision(0)["verdict"] == "tightened"
+
+    def test_a_commitment_stays_usable_after_a_refusal(self):
+        """The whole journey, not one call: refuse, re-propose, apply, and the
+        published record is still the thing the contract exists to publish."""
+        c = self.deploy()
+        S.call(c, "propose", 0, TIGHTER)
+        self.mocks(passes("narrower|broader|same", "broader|narrower|same"))
+        S.call(c, "judge", 0)
+        S.call(c, "propose", 0, TIGHTER)
+        self.mocks(passes("narrower|same|narrower", "broader|same|broader"))
+        S.call(c, "judge", 1)
+        r = c.ratchet(0)
+        assert r["tightened"] == 1 and r["broadened"] == 1
+        h = c.history(0)
+        assert [x["verdict"] for x in h["revisions"]] == ["broadened", "tightened"]
+        assert [x["applied"] for x in h["revisions"]] == [False, True]
+        assert c.text(0) == TIGHTER
+
     # -- authority ----------------------------------------------------------
 
     def test_a_stranger_cannot_propose_on_someone_elses_commitment(self):
