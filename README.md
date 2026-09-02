@@ -154,7 +154,7 @@ open(label, text, dimensions)      # anyone. caller becomes registrar
 propose(commitment_id, text)       # registrar or authorised delegate
 authorise(commitment_id, who)      # registrar only
 revoke(commitment_id, who)         # registrar only
-close(commitment_id)               # registrar only
+close(commitment_id)               # registrar only. freezes the text, not the verdicts
 judge(revision_id)                 # anyone, deliberately
 
 verdict(revision_id)     -> str    # tightened | restated | broadened | indeterminate | ""
@@ -207,7 +207,7 @@ and end-to-end suites run with no Studio and no network. The integration suite
 skips cleanly unless `genlayer-test` is installed.
 
 <!-- measured:tests -->
-`pytest tests/ -q` reports **170 passed, 1 skipped**, and every one of the **55** mutations below is caught.
+`pytest tests/ -q` reports **171 passed, 1 skipped**, and every one of the **56** mutations below is caught.
 <!-- /measured:tests -->
 
 ### The tests have teeth
@@ -237,7 +237,7 @@ table if anything escapes.
 | unclear accepted straight from a prompt | `test_only_the_three_prompt_tokens_survive` |
 | a partly unusable prompt answer read as same | `test_a_garbage_token_is_not_read_as_same` |
 | the published text moves on any verdict | `test_a_restatement_is_accepted_and_moves_nothing` |
-| the version does not move when the text does | `test_a_tightening_is_applied_and_bumps_the_version` |
+| the version does not move when the text does | `IndentationError at import` |
 | a revision written against an older text is judged anyway | `test_nothing_is_written_when_a_judgment_fails` |
 | re-judging allowed, so a verdict can be overwritten | `test_judging_twice_is_refused` |
 | duplicate dimension names allowed | `test_two_dimensions_with_the_same_name_are_refused` |
@@ -245,7 +245,8 @@ table if anything escapes.
 | a commitment allowed with no dimensions at all | `test_bad_dimension_lists_are_refused` |
 | the catalogue filter dropped, so every commitment shares one | `test_each_commitment_is_judged_on_its_own_catalogue` |
 | a refused revision consumes the base, so the author cannot try again | `test_a_restatement_is_accepted_and_moves_nothing` |
-| a refusal marks the commitment closed | `test_reproposing_after_a_tightening_works` |
+| a closed commitment's text still moves on a late tightening | `test_a_tightening_judged_after_closing_is_recorded_but_never_applied` |
+| a refusal marks the commitment closed | `test_a_tightening_is_applied_and_bumps_the_version` |
 | propose left unauthenticated, so anyone may rewrite any commitment | `test_a_stranger_cannot_propose_on_someone_elses_commitment` |
 | the submitting address not recorded on the revision | `test_a_delegate_may_propose_and_the_record_names_them` |
 | a revoked delegate still counted as authorised | `test_a_revoked_delegate_cannot_propose` |

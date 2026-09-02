@@ -187,6 +187,11 @@ MUTATIONS = [
         "        if True:",
     ),
     (
+        "a closed commitment's text still moves on a late tightening",
+        "            if not bool(c.closed):\n                c.text = str(r.text)",
+        "            if True:\n                c.text = str(r.text)",
+    ),
+    (
         "a refusal marks the commitment closed",
         "        r.judged = True",
         "        r.judged = True\n        c.closed = True",

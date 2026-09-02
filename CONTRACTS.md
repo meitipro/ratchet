@@ -126,7 +126,7 @@ from. `open()` sets `registrar` to the caller and that address is the identity;
 | `open` | anyone | no earlier owner to check against |
 | `propose` | registrar or active delegate | a surviving revision replaces the published text |
 | `authorise` / `revoke` | registrar | otherwise one delegation takes the commitment over |
-| `close` | registrar | it is the author's commitment to stop revising |
+| `close` | registrar | it is the author's commitment to stop revising. Pending proposals are still judged and counted, but a late `tightened` is recorded as not applied: the text and version never move on a closed commitment |
 | `judge` | anyone | an author who chose which revisions got examined would examine only the flattering ones |
 
 A delegate may propose and may not retract, authorise, revoke, or close.

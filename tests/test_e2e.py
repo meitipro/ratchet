@@ -626,6 +626,22 @@ class TestRatchet:
         S.call(c, "judge", 0)
         assert c.verdict(0) == "broadened"
 
+    def test_a_tightening_judged_after_closing_is_recorded_but_never_applied(self):
+        """The other half of closing. The verdict still lands and still counts,
+        so the author cannot escape a mark by closing; but closed means the
+        published text is frozen, and a proposal that was pending when the
+        author froze it must not move it from under them afterwards."""
+        c = self.deploy()
+        S.call(c, "propose", 0, TIGHTER)
+        S.call(c, "close", 0)
+        self.mocks(passes("narrower|same|narrower", "broader|same|broader"))
+        S.call(c, "judge", 0)
+        assert c.verdict(0) == "tightened"
+        assert c.revision(0)["applied"] is False
+        assert c.text(0) == ORIGINAL
+        assert c.commitment(0)["version"] == 0
+        assert c.ratchet(0)["tightened"] == 1
+
     def test_closing_twice_is_refused(self):
         c = self.deploy()
         S.call(c, "close", 0)

@@ -843,11 +843,17 @@ class Contract(gl.Contract):
         r.why = sanitise_reason(res.get("because", ""))
 
         if verdict == TIGHTENED:
-            # The ratchet turns. This is the only path that moves the text.
-            c.text = str(r.text)
-            c.version = c.version + u256(1)
-            r.applied = True
             c.n_tightened = c.n_tightened + u256(1)
+            # The ratchet turns. This is the only path that moves the text, and
+            # it does not turn on a CLOSED commitment. The verdict above is
+            # still recorded and counted, so an author cannot escape a mark by
+            # closing the moment a proposal looks bad; but closed means the
+            # published text is frozen, and a proposal that was pending when the
+            # author froze it is recorded as a tightening that was not applied.
+            if not bool(c.closed):
+                c.text = str(r.text)
+                c.version = c.version + u256(1)
+                r.applied = True
         elif verdict == RESTATED:
             c.n_restated = c.n_restated + u256(1)
         elif verdict == BROADENED:

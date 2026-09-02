@@ -181,6 +181,23 @@ nested collection — is refused by the runtime. A deployment expecting very man
 records should use one contract per tenant rather than one contract for all of
 them.
 
+## Closing freezes the text, not the verdicts
+
+`close()` stops new proposals. It does not stop a proposal that was already
+pending from being judged, because refusing to judge it would let an author
+escape a mark by closing the commitment the moment a proposal looked bad, and
+the loosening count `ratchet()` publishes would be a count of the attempts the
+author chose to leave visible.
+
+So a late verdict is recorded and counted. What it does not do is turn the
+ratchet: a `tightened` judged after close is stored with `applied = False`, and
+the published text and version stay exactly where the author froze them. Closed
+means frozen. A proposal that was pending when the author closed is recorded as
+a tightening that was not applied, which is the truthful description of it.
+
+Both halves are tested, and a mutation that lets the text move on a closed
+commitment is caught.
+
 ## A refusal leaves the author somewhere to go
 
 Added after a sibling project was rejected for the opposite: a contract whose
