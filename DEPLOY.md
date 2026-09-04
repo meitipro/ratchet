@@ -63,7 +63,7 @@ dimension they are about to weaken.
 | # | Method | Field | Value |
 |---|---|---|---|
 | 4 | `propose` | `commitment_id` | `0` |
-| | | `text` | `We retain personal data for at most 30 days and we notify affected users within 24 hours of any confirmed security breach.` |
+| | | `text` | `We retain personal data for at most 30 days, and we notify affected users within 24 hours of a breach.` |
 | 5 | `judge` | `revision_id` | `1` |
 
 Read it carefully: it contradicts nothing, it is shorter, and it never mentions
@@ -71,6 +71,15 @@ third party sharing again. Saying nothing is broader than making a promise, so
 this comes back **`broadened`**, `loosened` names dimension `1`, and the
 published text does **not** move. That refusal is the strongest single artifact
 on the page.
+
+> **Change the sharing clause and nothing else.** This text is the revision-0
+> text minus the middle clause, word for word. An earlier draft of this page
+> also reworded "of a breach" into "of any confirmed security breach", and that
+> second edit narrows what counts as a breach: the dimension then reads one way
+> forward and another in reverse, the leader cannot mirror it, and `unclear`
+> blocks the verdict at `indeterminate`. That is a correct refusal, but it
+> demonstrates the mirror rather than the loosening. Both are on the live
+> contract, at revisions 1 and 2, if you want to see the difference.
 
 ### The provenance model, on chain
 
@@ -90,10 +99,14 @@ on the page.
 | `verdict` | `0` | `tightened` |
 | `verdict` | `1` | `broadened` |
 | `loosened` | `1` | `1` — third party sharing |
-| `text` | `0` | the 30-day version from revision 0, unchanged by revision 1 |
-| `ratchet` | `0` | `tightened 1, broadened 1` |
+| `text` | `0` | the 30 day version from revision 0, unchanged by revision 1 |
+| `ratchet` | `0` | `tightened 1, broadened 1, loosening_pct 50` |
 | `history` | `0` | both revisions, with `applied` true then false |
 | `delegation` | `0` | the registrar, and one revoked delegate |
+
+On the live contract these ids run to 3 rather than 1, because the loosening
+demo was proposed three times while the wording above was being settled. The
+counts differ, the mechanism does not.
 
 ---
 
@@ -111,10 +124,19 @@ If it prints anything else, do not submit that address.
 
 ---
 
-## 5 · Send the address
+## 5 · Done
 
-Send it over and I will read the state back off the chain, confirm the outcomes
-above, fill the `{address}` placeholders, write the on-chain section from what
-the chain actually returned, and push.
+This has been run. The contract is live at
+[`0x69c326973af9E735B2c2Ed96689D42736eB2C33f`](https://explorer-studio.genlayer.com/address/0x69c326973af9E735B2c2Ed96689D42736eB2C33f),
+twelve transactions, every one finalized. All four verdicts the contract can
+reach are on the page, and the state read back off the chain is written up in
+[SUBMISSION.md](SUBMISSION.md#on-chain).
 
-**Nothing goes near the portal until that check is green.**
+One note for the next run: the revision that demonstrates `broadened` must drop
+the sharing clause and change **nothing else**. An earlier draft also reworded
+the breach clause, which made that dimension unmirrorable and returned
+`indeterminate` instead. Both are correct refusals, but only one of them shows
+the loosening cleanly.
+
+One step stays manual: uploading `brand/social.png` under
+Settings -> General -> Social preview. GitHub has no API for it.

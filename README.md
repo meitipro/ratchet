@@ -9,13 +9,71 @@ tightening is applied.
 
 - **Contract:** [`contracts/ratchet.py`](contracts/ratchet.py)
 - **Tests:** `pip install pytest && pytest tests/ -q` — nothing else to install
-- **Deployed:** `{address}` on studionet ([explorer](https://explorer-studio.genlayer.com/address/{address}))
+- **Deployed:** [`0x69c326973af9E735B2c2Ed96689D42736eB2C33f`](https://explorer-studio.genlayer.com/address/0x69c326973af9E735B2c2Ed96689D42736eB2C33f) on studionet
 - **Deploying it yourself:** [DEPLOY.md](DEPLOY.md) — the contract, the demo, and the check to run before submitting
 - **Verify a deployment:** `python scripts/verify_deployment.py 0x…` — diffs the
   on-chain source against this file
 - **Specification:** [CONTRACTS.md](CONTRACTS.md)
 - **Decisions:** [DECISIONS.md](DECISIONS.md)
 - **License:** MIT. Copy the agreement rule; that is what it is for.
+
+---
+
+## It is live, and every outcome is on chain
+
+One commitment, a frozen catalogue of three dimensions, four revisions judged
+against it. One turned the ratchet, one was refused for loosening, two were
+refused because the leader could not answer itself consistently.
+
+**Revision 0** — 90 days becomes 30, 72 hours becomes 24.
+
+```
+data retention narrower | third party sharing same | breach notice narrower
+-> tightened, APPLIED
+```
+
+The only path that moves the published text. `text(0)` is now the 30 day
+version and `version` is 1.
+
+**Revision 3** — the same text as the current one, minus the sharing clause.
+Retention and breach notice are word for word identical.
+
+```
+data retention same | third party sharing broader | breach notice same
+-> broadened, loosened: 1
+```
+
+It contradicts nothing, it is shorter, and it never mentions third party sharing
+again. **Saying nothing is broader than making a promise**, so the ratchet does
+not turn: the published text is untouched.
+
+**Revisions 1 and 2** — the same drop, but that draft also changed "of a breach"
+to "of any confirmed security breach".
+
+```
+data retention same | third party sharing broader | breach notice unclear
+-> indeterminate
+```
+
+That second edit narrows what counts as a breach, so the dimension reads one way
+forward and another in reverse. The leader could not mirror it, `unclear`
+outranks every other token, and the contract refused to publish a confident
+verdict. **Judged twice, in two separate consensus rounds, it returned the
+identical vector both times** — the refusal is a property of the text, not noise.
+
+Worth reading together: revisions 2 and 3 drop exactly the same promise. One is
+`indeterminate` and one is `broadened`, and the difference is a single clause
+elsewhere in the sentence.
+
+`ratchet(0)` now reads:
+
+```json
+{"proposed": 4, "judged": 4, "tightened": 1, "broadened": 1,
+ "restated": 0, "indeterminate": 2, "loosening_pct": 25, "version": 1}
+```
+
+Twelve transactions, every one `FINALIZED`, no failed or abandoned transaction
+on the page.
 
 ---
 

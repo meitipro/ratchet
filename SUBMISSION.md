@@ -50,6 +50,80 @@ standalone primitive.
 
 ---
 
+## On chain
+
+Deployed and exercised on studionet at
+[`0x69c326973af9E735B2c2Ed96689D42736eB2C33f`](https://explorer-studio.genlayer.com/address/0x69c326973af9E735B2c2Ed96689D42736eB2C33f).
+Twelve transactions, every one `FINALIZED`, no failed or abandoned transaction
+on the page. Every value below was read back from the chain with view calls
+afterwards, not copied from a local run.
+
+| # | Transaction | Result |
+|---|---|---|
+| 1 | deploy | finalized |
+| 2 | `open("Acme Data Ltd", …, "data retention\|third party sharing\|breach notice")` | catalogue frozen at three dimensions |
+| 3-4 | `propose` + `judge(0)` | **`tightened`**, applied. `text` moves, `version` -> 1 |
+| 5-6 | `propose` + `judge(1)` | `indeterminate`, `loosened: 1` |
+| 7-8 | `authorise` + `revoke` | delegate added, then deactivated with the row kept |
+| 9-10 | `propose` + `judge(2)` | `indeterminate` again, the identical vector |
+| 11-12 | `propose` + `judge(3)` | **`broadened`**, `loosened: 1` |
+
+### The four verdicts, and why
+
+| Revision | Vector | Verdict |
+|---|---|---|
+| 0 | `narrower \| same \| narrower` | `tightened`, **applied** |
+| 1 | `same \| broader \| unclear` | `indeterminate` |
+| 2 | `same \| broader \| unclear` | `indeterminate` |
+| 3 | `same \| broader \| same` | `broadened` |
+
+Revision 0 is the only path that moves the published text.
+
+Revision 3 is the failure this contract exists for: a revision that contradicts
+nothing, is shorter, and silently stops mentioning third party sharing. The
+model marked that dimension `broader` and the contract refused to apply it.
+
+Revisions 1 and 2 drop the same promise, but that draft also changed "of a
+breach" to "of any confirmed security breach". That narrows what counts as a
+breach, so the dimension reads one way forward and another in reverse, the
+leader could not mirror it, and `unclear` blocked a confident verdict. **Judged
+twice in two separate consensus rounds it returned the identical vector**, so
+the refusal is a property of the text rather than noise.
+
+Revisions 2 and 3 drop exactly the same clause and land on different verdicts.
+The difference is one edit elsewhere in the sentence, and the contract is right
+about both.
+
+`ratchet(0)`:
+
+```json
+{"proposed": 4, "judged": 4, "tightened": 1, "broadened": 1,
+ "restated": 0, "indeterminate": 2, "loosening_pct": 25, "version": 1}
+```
+
+`delegation(0)`:
+
+```json
+{"registrar": "0x3e1D268c8B1Ba7d042968ab713467C5631831513",
+ "delegates": [{"who": "0x7777777777777777777777777777777777777777", "active": false}]}
+```
+
+A revoked delegate keeps its row, so a delegation that existed stays visible.
+Every revision also carries the address that proposed it.
+
+### Reproducing the check
+
+```bash
+python scripts/verify_deployment.py 0x69c326973af9E735B2c2Ed96689D42736eB2C33f
+```
+
+Reads the source out of the deploy transaction, compares it to
+`contracts/ratchet.py`, and runs `genvm-lint lint` on those bytes. It reports
+the deployed source as identical: pasting into the Studio editor rewrote the
+line endings and dropped the final newline, and nothing runs either of those.
+
+---
+
 ## Title
 
 ```
@@ -70,7 +144,7 @@ Contract: https://github.com/meitipro/ratchet/blob/main/contracts/ratchet.py
 Spec:     https://github.com/meitipro/ratchet/blob/main/CONTRACTS.md
 Decisions https://github.com/meitipro/ratchet/blob/main/DECISIONS.md
 Tests:    https://github.com/meitipro/ratchet/tree/main/tests
-Explorer: https://explorer-studio.genlayer.com/address/{address}
+Explorer: https://explorer-studio.genlayer.com/address/0x69c326973af9E735B2c2Ed96689D42736eB2C33f
 ```
 
 ---
