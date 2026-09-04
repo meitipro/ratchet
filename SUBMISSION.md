@@ -130,10 +130,10 @@ line endings and dropped the final newline, and nothing runs either of those.
 Ratchet: a published commitment that can only ever be tightened
 ```
 
-## Notes
+## Notes (999 characters, the box caps at 1000)
 
 ```
-Ratchet decides whether a revision to a published commitment tightens it, restates it, or quietly loosens it, dimension by dimension against a catalogue frozen when the commitment was opened, and only a tightening is applied. The failure it catches is a dropped clause: a revision that reads as an improvement and simply stops promising something, where nothing is contradicted and only the pair of texts carries the loss. The block answers one of three tokens per dimension over a list the contract already holds, and it answers twice, once with the texts swapped, so a dimension whose two passes do not mirror is stored as unclear rather than forgiven at comparison time. Validators then compare the whole vector for exact equality, with no tolerance anywhere. A commitment belongs to the address that opened it, only that address or a delegate it authorised may propose, and every revision stores the account that submitted it.
+Ratchet decides whether a revision to a published commitment tightens it, restates it, or quietly loosens it, and applies only a tightening. The failure it catches is the revision that contradicts nothing and is simply shorter: an author drops a clause and the promise is gone without a word being disputed, so saying nothing counts as broader than making a promise. The catalogue of dimensions is frozen when the commitment opens, so an author cannot drop the dimension they are about to weaken. The block runs the comparison twice, once forward and once with the texts swapped, and a dimension whose two passes do not mirror becomes unclear before any node compares anything, so the uncertainty is carried by the stored value rather than by a tolerance in the agreement rule. Agreement between nodes is exact on the whole vector. A commitment belongs to the address that opened it, only that address or a delegate it authorised may propose, and every revision stores the account that submitted it.
 ```
 
 ## Links
